@@ -1,0 +1,124 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+
+public class SimpleTextEditor extends JFrame implements ActionListener {
+    // Text area
+    JTextArea textArea;
+
+    // Frame
+    JFrame frame;
+
+    // Constructor
+    public SimpleTextEditor() {
+        // Create a frame
+        frame = new JFrame("Simple Text Editor");
+
+        // Text component
+        textArea = new JTextArea();
+
+        // Create a menu bar
+        JMenuBar menuBar = new JMenuBar();
+
+        // Create File menu
+        JMenu fileMenu = new JMenu("File");
+
+        // Create menu items
+        JMenuItem newItem = new JMenuItem("New");
+        JMenuItem openItem = new JMenuItem("Open");
+        JMenuItem saveItem = new JMenuItem("Save");
+        JMenuItem exitItem = new JMenuItem("Exit");
+
+        // Add action listeners
+        newItem.addActionListener(this);
+        openItem.addActionListener(this);
+        saveItem.addActionListener(this);
+        exitItem.addActionListener(this);
+
+        // Add menu items to File menu
+        fileMenu.add(newItem);
+        fileMenu.add(openItem);
+        fileMenu.add(saveItem);
+        fileMenu.add(exitItem);
+
+        // Add File menu to menu bar
+        menuBar.add(fileMenu);
+
+        // Set the menu bar to the frame
+        frame.setJMenuBar(menuBar);
+
+        // Add text area to frame
+        frame.add(textArea);
+
+        // Set the frame size
+        frame.setSize(500, 500);
+
+        // Set frame's layout
+        frame.setLayout(new BorderLayout());
+
+        // Add text area to center
+        frame.add(textArea, BorderLayout.CENTER);
+
+        // Make the frame visible
+        frame.setVisible(true);
+
+        // Close operation
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    // Action event handler
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+
+        switch (command) {
+            case "New":
+                textArea.setText("");
+                break;
+            case "Open":
+                openFile();
+                break;
+            case "Save":
+                saveFile();
+                break;
+            case "Exit":
+                System.exit(0);
+                break;
+        }
+    }
+
+    // Method to open a file
+    private void openFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
+                textArea.read(reader, null);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error opening file: " + ex.getMessage());
+            }
+        }
+    }
+
+    // Method to save a file
+    private void saveFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showSaveDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile))) {
+                textArea.write(writer);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+            }
+        }
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        new SimpleTextEditor();
+    }
+}
